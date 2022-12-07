@@ -5,6 +5,28 @@ layout: wgnote
 
 *Author*: Deyan Ginev
 
+<style>
+.markdown-body table tr {
+  background-color: white !important;
+}
+.markdown-body pre {
+  display: table-cell;
+  background-color: white !important;
+}
+.hljs{padding:.5em;color:#383a42;background:#fafafa}
+.hljs-comment,.hljs-quote{color:#717277;font-style:italic}
+.hljs-doctag,.hljs-formula,.hljs-keyword{color:#a626a4}
+.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#ca4706;font-weight:700}
+.hljs-literal{color:#0b76c5}
+.hljs-addition,.hljs-attribute,.hljs-meta-string,.hljs-regexp,.hljs-string{color:#42803c}
+.hljs-built_in,.hljs-class .hljs-title{color:#9a6a01}
+.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#986801}
+.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#336ae3}
+.hljs-emphasis{font-style:italic}
+.hljs-strong{font-weight:700}
+.hljs-link{text-decoration:underline}
+</style>
+
 ## Abstract
 
 This note suggests a two-step alogrithm for transforming intent expressions into Content MathML.
@@ -15,73 +37,72 @@ Second, we suggest a "phrase book" for mapping those operator trees into the Pra
 
 Starting with an intent expression, we offer a `to_content` procedure to create an operator tree, via the following list of transformation rules:
 
-The rules are *ordered*, and should be executed top to bottom.
+The rules are *ordered*, and should be matched top-first to bottom-last.
 
-<table width="100%">
-<thead>
+<table style="width: 80rem; overflow:visible;">
+<thead><tr>
   <th>intent input</th><th>to_content output</th><th>Extra Requirement</th>
-</thead>
+</tr></thead>
 <tbody>
 <tr>
-<td>hint</td><td> ignore</td></tr><tr>
-<td>literal</td><td> ignore</td></tr><tr>
-<td>concept</td><td>
-
-<pre class="xml">
-<csymbol cd="intent">concept</csymbol>
-</pre>
-</td></tr><tr>
+<td>hint</td><td>ignore</td><td></td>
+</tr><tr>
+<td>literal</td><td>ignore</td><td></td>
+</tr><tr>
+<td>concept</td>
+<td>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>concept<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
+</td><td></td>
+</tr><tr>
 <td>number</td><td>
 
-<pre class="xml">
-<cn>number</cn>
-</pre>
-
-</td></tr><tr>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>number<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+</code></pre>
+</td><td></td>
+</tr><tr>
 <td>reference</td><td>
 
-<pre class="xml">
-to_content(ref_target_node)
-</pre>
-</td></tr><tr>
+<pre><code class="hljs">to_content(ref_target_node)
+</code></pre>
+</td><td></td>
+</tr><tr>
 <td>
 
-<pre>
-intent hint? '(' arguments? ')'
-</pre>
+<pre><code class="hljs">intent hint? '(' arguments? ')'</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<apply>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
   to_content(intent)
   to_content(argument_1)
   ...
   to_content(argument_n)
-</apply>
-</pre>
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
 </td><td>"intent" head is <br>concept, reference, <br>
 number, or compound expression.
-</td></tr><tr><td>
+</td>
+</tr><tr>
+<td>
 
-<pre>
-intent hint? '(' arguments? ')'
-</pre>
-</td><td>ignore
-</td><td>"intent" head is a literal,<br> arguments are all literals
-</td></tr><tr><td>
+<pre><code class="hljs">intent hint? '(' arguments? ')'
+</code></pre>
+</td>
+<td>ignore</td>
+<td>"intent" head is a literal,<br> arguments are all literals</td>
+</tr><tr>
+<td>
 
-<pre>
-intent hint? '('
+<pre><code class="hljs">intent hint? '('
   (pre_concept_arguments ',')?
   only_concept_argument
   (',' post_arguments)? ')'
-</pre>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<apply>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
   to_content(only_concept_argument)
   to_content(pre_concept_arguments_1)
   ...
@@ -89,191 +110,166 @@ intent hint? '('
   to_content(post_concept_arguments_1)
   ...
   to_content(post_concept_arguments_n)
-</apply>
-</pre>
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
 
-</td><td>"intent" head is a literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.
-</td><tr><td>
+</td><td>"intent" head is a literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.</td>
+</tr><tr>
+<td>
 
-<pre>
-intent hint? '(' arguments? ')'
-</pre>
+<pre><code class="hljs">intent hint? '(' arguments? ')'</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<apply>
-  <csymbol cd="intent">narrative_pieces</csymbol>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>narrative-pieces<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
   to_content(argument_1)
   ...
   to_content(argument_n)
-</apply>
-</pre>
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
 
-</td><td>"intent" head is a literal,<br> all other cases
-</td></tr></tbody></table>
-
+</td><td>"intent" head is a literal,<br> all other cases</td>
+</tr>
+</tbody>
+</table>
 
 
 ## Example transformations to operator trees
 
 
-<table width="100%">
-<thead>
+<table style="width: 80rem; overflow:visible;">
+<thead><tr>
   <th>intent input</th><th>to_content output</th><th>Extra Requirement</th>
-</thead>
+</tr></thead>
 <tbody>
-<tr>
-<td>
-
-<pre>
-_@silent
-</pre>
-
-</td><td></td></tr><tr>
-<td>
-
-<pre>
-_to
-</pre>
-
-</td><td></td></tr><tr>
-<td>
-
-<pre>
-euler-constant
-</pre>
-
-</td><td>
-
-<pre class="xml">
-<csymbol cd="intent">euler-constant</csymbol>
-</pre>
-</td></tr><tr>
-<td>
-
-<pre>
-0.01
-</pre>
-
-</td><td>
-
-<pre class="xml">
-<cn>0.01</cn>
-</pre>
-
-</td></tr><tr>
-<td>
-
-<pre>
-$operator
-</pre>
-</td><td>
-
-<pre class="xml">
-to_content(<mo arg="operator">+</mo>)
-</pre>
-</td></tr><tr>
-<td>
-
-<pre>
-absolute-value($inner)
-</pre>
-</td><td>
-
-<pre class="xml">
-<apply>
-  <csymbol cd="intent">absolute-value</csymbol>
-  to_content(<mrow arg="inner">...</mrow>)
-</apply>
-</pre>
-</td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
-</td></tr>
-<tr>
-<td>
-
-<pre>
-$op@infix(1,2,3)
-</pre>
-</td><td>
-
-<pre class="xml">
-<apply>
-  to_content(<mo arg="op">...</mo>)
-  <cn>1</cn>
-  <cn>2</cn>
-  <cn>3</cn>
-</apply>
-</pre>
-</td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
-</td></tr>
-<tr>
-<td>
-
-<pre>
-inverse(f)(x)
-</pre>
-
-</td><td>
-
-<pre class="xml">
-<apply>
-  <apply>
-    <csymbol cd="intent">inverse</csymbol>
-    <csymbol cd="intent">f</csymbol>
-  </apply>
-  <csymbol cd="intent">x</csymbol>
-</apply>
-</pre>
-
-</td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
-</td></tr>
 <tr><td>
+<pre><code class="hljs">_@silent</code></pre>
+</td>
+<td></td>
+</tr><tr>
+<td>
+<pre><code class="hljs">_to</code></pre>
+</td><td></td>
+</tr><tr>
+<td>
+<pre><code class="hljs">euler-constant</code></pre>
+</td><td>
 
-<pre>
-_(_used,_for,_brevity)
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>euler-constant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
+
+</td>
+</tr><tr>
+<td><pre><code class="hljs">0.01</code></pre>
+
+</td><td>
+
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>0.01<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+</code></pre>
+
+</td>
+</tr><tr>
+<td>
+
+<pre><code class="hljs">$operator</code></pre>
+</td><td>
+
+<pre><code class="hljs xml">
+to_content(<span class="hljs-tag">&lt;<span class="hljs-name">mo</span> arg="operator"&gt;</span>+<span class="hljs-tag">&lt;/<span class="hljs-name">mo</span>&gt;</span>)
+</code></pre>
+</td>
+</tr><tr>
+<td>
+
+<pre><code class="hljs">absolute-value($inner)</code></pre>
+</td><td>
+
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>absolute-value<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+  to_content(<span class="hljs-tag">&lt;<span class="hljs-name">mrow</span> arg="inner"&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">mrow</span>&gt;</span>)
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
+</td><td>"intent" head is <br>concept, reference, <br>
+number, or compound expression.
+</td>
+</tr><tr>
+<td>
+
+<pre><code class="hljs">$op@infix(1,2,3)</code></pre>
+</td><td>
+
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  to_content(<span class="hljs-tag">&lt;<span class="hljs-name">mo</span> arg="op"&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">mo</span>&gt;</span>)
+  <span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>1<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>2<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>3<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
+
+</td><td>"intent" head is <br>concept, reference, <br>
+number, or compound expression.
+</td>
+</tr><tr>
+<td>
+
+<pre><code class="hljs">inverse(f)(x)
+</code></pre>
+
+</td><td>
+
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>inverse<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>f<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+ <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>x<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
+
+</td><td>"intent" head is <br>concept, reference, <br>
+number, or compound expression.
+</td>
+</tr><tr>
+<td>
+
+<pre><code class="hljs">_(_used,_for,_brevity)</code></pre>
 </td><td>
 </td><td>"intent" head is a literal,<br> arguments are all literals
-</td></tr><tr><td>
+</td>
+</tr><tr>
+<td>
 
-<pre>
-_(_the, open-interval, _from, $arg1, _to $arg2)
-</pre>
+<pre><code class="hljs">_(_the, open-interval, _from, $arg1, _to $arg2)</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<apply>
-  <csymbol cd="intent">open-interval</csymbol>
-  to_content(<msub arg="arg1">...</msub>)
-  to_content(<msub arg="arg2">...</msub>)
-</apply>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>open-interval<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+  to_content(<span class="hljs-tag">&lt;<span class="hljs-name">msub</span> arg="arg1"&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">msub</span>&gt;</span>)
+  to_content(<span class="hljs-tag">&lt;<span class="hljs-name">msub</span> arg="arg2"&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">msub</span>&gt;</span>)
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
 
 </td><td>"intent" head is a literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.
-</td><tr><td>
+</td>
+</tr><tr>
+<td>
 
-<pre>
-_(_the, open-interval, _from, x, _to, $arg2)
-</pre>
+<pre><code class="hljs">_(_the, open-interval, _from, x, _to, $arg2)</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<apply>
-  <csymbol cd="intent">narrative_pieces</csymbol>
-  <csymbol cd="intent">open-interval</csymbol>
-  <csymbol cd="intent">x</csymbol>
-  to_content(<mi arg="arg2">...</mi>)
-</apply>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>narrative-pieces<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>open-interval<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>x<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+  to_content(<span class="hljs-tag">&lt;<span class="hljs-name">mi</span> arg="arg2"&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">mi</span>&gt;</span>)
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
 
-</td><td>"intent" head is a literal,<br> all other cases
-</td></tr></tbody></table>
+</td><td>"intent" head is a literal,<br> all other cases</td>
+</tr></tbody></table>
 
 
 # Phrase book to Pragmatic Content MathML
@@ -284,1659 +280,1405 @@ It covers the chapter [4.4 Content MathML for Specific Operators and Constants](
 
 Note that there are quite often known aliases for mathematical  concepts (in narration, "addition" may be referred to as simply speaking the operator "plus" sign), and they would need to be included inside such phrase books in order to gain coverage (or, alternatively, an external "alias-resolution" mechanism would be needed, maybe provided by an Intent Open list).
 
-<table width="100%">
-<thead>
-  <th>intent CD symbol input</th><th>Pragmatic CMML output</th><th>Extra Requirement</th>
-</thead>
+<table style="width: 80rem; overflow:visible;">
+<thead><tr>
+  <th>intent CD symbol input</th><th>Pragmatic CMML output</th>
+</tr></thead>
 <tbody>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">\p{Letter}</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>\p{Letter}<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<ci>\p{Letter}</ci>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">ci</span>&gt;</span>\p{Letter}<span class="hljs-tag">&lt;/<span class="hljs-name">ci</span>&gt;</span>
+</code></pre>
 
-</td><td></td></tr>
+</td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">plus</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>plus<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<plus/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">plus</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">addition</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>addition<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<plus/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">plus</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">interval</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>interval<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<interval>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">interval</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">inverse</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>inverse<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<inverse>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">inverse</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">function-composition</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>function-composition<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<compose/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">compose</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">identity-function</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>identity-function<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<ident/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">ident</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">domain</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>domain<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<domain/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">domain</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">codomain</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>codomain<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<codomain/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">codomain</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">image</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>image<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<image/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">image</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">piecewise-function</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>piecewise-function<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<piecewise>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">piecewise</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">otherwise</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>otherwise<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<otherwise>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">otherwise</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">quotient</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>quotient<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<quotient/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">quotient</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">factorial</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>factorial<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<factorial/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">factorial</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">division</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>division<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<divide/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">divide</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">maximum</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>maximum<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<max/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">max</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">minimum</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>minimum<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<min/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">min</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">subtraction</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>subtraction<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<minus/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">minus</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">exponentiation</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>exponentiation<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<power/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">power</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">remainder</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>remainder<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<rem/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">rem</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">multiplication</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>multiplication<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<times/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">times</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">root</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>root<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<root/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">root</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">greatest-common-divisor</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>greatest-common-divisor<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<gcd/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">gcd</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">and</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>and<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<and/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">and</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">or</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>or<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<or/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">or</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">exclusive-or</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>exclusive-or<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<xor/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">xor</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">not</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>not<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<not/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">not</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">implies</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>implies<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<implies/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">implies</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">for-all</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>for-all<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<forall/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">forall</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">exists</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>exists<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<exists/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">exists</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">absolute-value</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>absolute-value<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<abs/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">abs</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">complex-conjugate</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>complex-conjugate<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<conjugate/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">conjugate</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">argument</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>argument<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arg/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arg</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">real-part</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>real-part<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<real/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">real</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">imaginary part</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>imaginary part<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<imaginary/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">imaginary</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">lowest-common-multiple</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>lowest-common-multiple<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<lcm/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">lcm</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">floor</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>floor<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<floor/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">floor</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">ceiling</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>ceiling<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<ceiling/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">ceiling</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">equals</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>equals<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<eq/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">eq</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">not-equals</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>not-equals<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<neq/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">neq</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">greater-than</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>greater-than<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<gt/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">gt</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">less-than</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>less-than<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<lt/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">lt</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">greater-than-or-equal</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>greater-than-or-equal<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<geq/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">geq</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">less-than-or-equal</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>less-than-or-equal<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<leq/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">leq</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">equivalent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>equivalent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<equivalent/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">equivalent</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">approximately</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>approximately<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<approx/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">approx</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">factor-of</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>factor-of<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<factorof/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">factorof</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">integral</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>integral<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<int/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">int</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">differentiation</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>differentiation<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<diff/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">diff</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">partial-differentiation</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>partial-differentiation<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<partialdiff/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">partialdiff</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">divergence</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>divergence<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<divergence/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">divergence</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">gradient</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>gradient<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<grad/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">grad</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">curl</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>curl<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<curl/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">curl</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">laplacian</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>laplacian<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<laplacian/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">laplacian</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">set</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>set<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<set>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">set</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">list</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>list<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<list>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">list</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">union</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>union<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<union/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">union</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">intersect</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>intersect<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<intersect/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">intersect</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">set-inclusion</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>set-inclusion<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<in/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">in</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">set-exclusion</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>set-exclusion<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<notin/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">notin</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">subset</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>subset<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<subset/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">subset</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">proper-subset</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>proper-subset<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<prsubset/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">prsubset</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">not-subset</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>not-subset<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<notsubset/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">notsubset</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">not-proper-subset</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>not-proper-subset<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<notprsubset/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">notprsubset</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">set-difference</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>set-difference<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<setdiff/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">setdiff</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">cardinality</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>cardinality<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<card/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">card</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">cartesian-product</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>cartesian-product<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<cartesianproduct/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">cartesianproduct</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">sum</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>sum<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<sum/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">sum</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">product</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>product<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<product/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">product</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">limits</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>limits<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<limit/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">limit</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">tends-to</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>tends-to<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<tendsto/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">tendsto</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">sine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>sine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<sin/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">sin</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">cosine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>cosine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<cos/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">cos</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">tangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>tangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<tan/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">tan</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">secant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>secant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<sec/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">sec</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">cosecant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>cosecant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<csc/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csc</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">catangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>catangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<cot/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">cot</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">arcsine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>arcsine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arcsin/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arcsin</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">arccosine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>arccosine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arccos/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arccos</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">arctangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>arctangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arctan/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arctan</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">arcsecant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>arcsecant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arcsec/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arcsec</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">arccosecant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>arccosecant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arccsc/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arccsc</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">arccotangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>arccotangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arccot/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arccot</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-sine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-sine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<sinh/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">sinh</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyerpbolic-cosine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyerpbolic-cosine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<cosh/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">cosh</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-tangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-tangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<tanh/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">tanh</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-secant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-secant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<sech/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">sech</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-cosecant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-cosecant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<csch/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csch</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-catangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-catangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<coth/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">coth</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-arcsine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-arcsine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arcsinh/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arcsinh</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-arccosine</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-arccosine<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arccosh/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arccosh</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-arctangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-arctangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arctanh/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arctanh</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-arcsecant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-arcsecant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arcsech/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arcsech</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-arccosecant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-arccosecant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arccsch/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arccsch</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">hyperbolic-arccotangent</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-arccotangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<arccoth/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">arccoth</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">exponential-function</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>exponential-function<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<exp/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">exp</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">natural-logarithm</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>natural-logarithm<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<ln/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">ln</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">logarithm</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>logarithm<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<log/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">log</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">mean</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>mean<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<mean/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">mean</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">standard-deviation</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>standard-deviation<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<sdev/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">sdev</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">variance</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>variance<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<variance/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">variance</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">median</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>median<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<median/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">median</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">mode</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>mode<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<mode/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">mode</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">moment</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>moment<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<moment/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">moment</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">vector</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>vector<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<vector>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">vector</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">matrix</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>matrix<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<matrix>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">matrix</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">determinant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>determinant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<determinant/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">determinant</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">transpose</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>transpose<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<transpose/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">transpose</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">selector</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>selector<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<selector/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">selector</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">vector-product</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>vector-product<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<vectorproduct/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">vectorproduct</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">scalar-product</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>scalar-product<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<scalarproduct/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">scalarproduct</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">outer-product</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>outer-product<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<outerproduct/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">outerproduct</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">integer-numbers</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>integer-numbers<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<integers/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">integers</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">real-numbers</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>real-numbers<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<reals/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">reals</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">rational-numbers</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>rational-numbers<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<rationals/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">rationals</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">natural-numbers</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>natural-numbers<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<naturalnumbers/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">naturalnumbers</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">complex-numbers</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>complex-numbers<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<complexes/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">complexes</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">prime-numbers</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>prime-numbers<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<primes/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">primes</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">euler-constant</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>euler-constant<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<exponentiale/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">exponentiale</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">imaginary-number</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>imaginary-number<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<imaginaryi/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">imaginaryi</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">not-a-number</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>not-a-number<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<notanumber/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">notanumber</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">true</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<true/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">true</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">false</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>false<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<false/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">false</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">empty-set</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>empty-set<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<emptyset/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">emptyset</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">pi</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>pi<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<pi/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">pi</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">euler-gamma</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>euler-gamma<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<eulergamma/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">eulergamma</span>/&gt;</span>
+</code></pre>
 
 </td></tr>
 <tr><td>
 
-<pre class="xml">
-<csymbol cd="intent">infinity</csymbol>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>infinity<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+</code></pre>
 
 </td><td>
 
-<pre class="xml">
-<infinity/>
-</pre>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">infinity</span>/&gt;</span>
+</code></pre>
 
 </td></tr></tbody></table>

@@ -20,12 +20,10 @@ discussions. Some may be submitted later as W3C WG Notes or W3C Recommendations.
 
 [Intent: Suggestions for a Minimal Intent List](minimal-intent-core)
 
+[Intent: Transformation to Content](intent-to-content)
 ---
 
 
 
 
 [Git Source](https://github.com/w3c/mathml-docs/)
-
-
-

@@ -41,7 +41,7 @@ pre.def {
 
 This note suggests a two-step alogrithm for transforming intent expressions into Content MathML.
 First, we offer rules to build an operator tree with symbols in the "intent" virtual content dictionary.
-Second, we suggest a "phrase book" for mapping those operator trees into the Pragmatic subset of Content MathML.
+Second, we suggest a "phrase book" for mapping those operator trees into the classic subset of Content MathML.
 
 ## Preliminaries - The Grammar for <code class="attribue">intent</code>
 
@@ -99,6 +99,14 @@ The rules are *ordered*, and should be matched top-first to bottom-last.
 </tr><tr>
 <td>
 
+<pre><code class="hljs">intent hint? '(' arguments? ')'
+</code></pre>
+</td>
+<td>ignore</td>
+<td>"intent" head is a literal,<br> arguments are all literals</td>
+</tr><tr>
+<td>
+
 <pre><code class="hljs">intent hint? '(' arguments? ')'</code></pre>
 
 </td><td>
@@ -111,20 +119,13 @@ The rules are *ordered*, and should be matched top-first to bottom-last.
 <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
 </code></pre>
 </td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
+number, compound expression,<br> or literal different from "_".
 </td>
 </tr><tr>
+
 <td>
 
-<pre><code class="hljs">intent hint? '(' arguments? ')'
-</code></pre>
-</td>
-<td>ignore</td>
-<td>"intent" head is a literal,<br> arguments are all literals</td>
-</tr><tr>
-<td>
-
-<pre><code class="hljs">intent hint? '('
+<pre><code class="hljs">_ hint? '('
   (pre_concept_arguments ',')?
   only_concept_argument
   (',' post_arguments)? ')'
@@ -143,11 +144,11 @@ number, or compound expression.
 <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
 </code></pre>
 
-</td><td>"intent" head is a literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.</td>
+</td><td>"intent" head is the underscore literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.</td>
 </tr><tr>
 <td>
 
-<pre><code class="hljs">intent hint? '(' arguments? ')'</code></pre>
+<pre><code class="hljs">_ hint? '(' arguments? ')'</code></pre>
 
 </td><td>
 
@@ -159,7 +160,7 @@ number, or compound expression.
 <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
 </code></pre>
 
-</td><td>"intent" head is a literal,<br> all other cases</td>
+</td><td>"intent" head is the underscore literal,<br> all other cases</td>
 </tr>
 </tbody>
 </table>
@@ -221,7 +222,7 @@ to_content(<span class="hljs-tag">&lt;<span class="hljs-name">mo</span> arg="ope
 <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
 </code></pre>
 </td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
+number, compound expression,<br> or literal different from "_".
 </td>
 </tr><tr>
 <td>
@@ -238,7 +239,7 @@ number, or compound expression.
 </code></pre>
 
 </td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
+number, compound expression,<br> or literal different from "_".
 </td>
 </tr><tr>
 <td>
@@ -258,12 +259,12 @@ number, or compound expression.
 </code></pre>
 
 </td><td>"intent" head is <br>concept, reference, <br>
-number, or compound expression.
+number, compound expression,<br> or literal different from "_".
 </td>
 </tr><tr>
 <td>
 
-<pre><code class="hljs">_(_used,_for,_brevity)</code></pre>
+<pre><code class="hljs">_note(_used,_for,_brevity)</code></pre>
 </td><td>
 </td><td>"intent" head is a literal,<br> arguments are all literals
 </td>
@@ -281,7 +282,7 @@ number, or compound expression.
 <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
 </code></pre>
 
-</td><td>"intent" head is a literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.
+</td><td>"intent" head is the underscore literal,<br> arguments contain <br><strong>exactly one</strong> concept argument.
 </td>
 </tr><tr>
 <td>
@@ -298,13 +299,13 @@ number, or compound expression.
 <span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
 </code></pre>
 
-</td><td>"intent" head is a literal,<br> all other cases</td>
+</td><td>"intent" head is the underscore literal,<br> all other cases</td>
 </tr></tbody></table>
 
 
-## Phrase book to Pragmatic Content MathML
+## Phrase book to classic Content MathML
 
-The following (partial) map can be used to rewrite the virtual content dictionary trees as Pragmatic Content MathML.
+The following (partial) map can be used to rewrite the virtual content dictionary trees as classic Content MathML.
 
 It covers the chapter [4.4 Content MathML for Specific Operators and Constants](https://www.w3.org/TR/MathML3/chapter4.html#contm.opel).
 
@@ -312,7 +313,7 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 
 <table style="width: 80rem; overflow:visible;">
 <thead><tr>
-  <th>intent CD symbol input</th><th>Pragmatic CMML output</th>
+  <th>intent CD input symbol</th><th>classic Content MathML output</th>
 </tr></thead>
 <tbody>
 <tr><td>

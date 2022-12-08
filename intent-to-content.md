@@ -1733,3 +1733,11 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 </code></pre>
 
 </td></tr></tbody></table>
+
+### Phrasebook Caveat
+
+Note that this table only covers a selection of the simplest leaf-to-leaf mapping and remains silent on all tree-to-tree structural issues, such as:
+ - adding bound variable markup,
+ - rewriting subtrees to fit the appropriate scaffolding
+ - rewriting arguments to match up the expected argument order
+ - choosing between competing Content Dictionary definitions (e.g. for mapping units)

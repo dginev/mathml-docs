@@ -6,6 +6,16 @@ layout: wgnote
 *Author*: Deyan Ginev
 
 <style>
+pre.def {
+  padding: .5em 1em;
+  background: #fafafa;
+  background: #8ccbf2;
+  margin: 1.2em 0;
+  border-left: 0.5em solid #8ccbf2;
+  border-left: 0.5em solid var(--def-border);
+  color: black;
+  color: var(--def-text);
+}
 .markdown-body table tr {
   background-color: white !important;
 }
@@ -33,7 +43,27 @@ This note suggests a two-step alogrithm for transforming intent expressions into
 First, we offer rules to build an operator tree with symbols in the "intent" virtual content dictionary.
 Second, we suggest a "phrase book" for mapping those operator trees into the Pragmatic subset of Content MathML.
 
-# Creating an Operator Tree
+## Preliminaries - The Grammar for <code class="attribue">intent</code>
+
+This is the December 2022 state of MathML 4's [5.1.1 The Grammar for intent](https://w3c.github.io/mathml/#mixing_intent_grammar).
+
+<p>The value of the <code class="attribute">intent</code> attribute, after ignoring white
+space between tokens, should match the following grammar.</p>
+
+<pre class="def bnf">
+intent             := concept-or-literal | number | reference | application
+concept-or-literal := NCName
+number             := '-'? digit+ ( '.' digit+ )?
+reference          := '$' NCName
+application        := intent hint? '(' arguments? ')'
+arguments          := intent ( ',' intent )*
+hint               := '@' ( 'prefix' | 'infix' | 'postfix' | 'function' | 'silent' )
+</pre>
+
+<p>Here <a href="https://www.w3.org/TR/REC-xml-names/#NT-NCName"><code>NCName</code></a>
+is as defined in [[xml-names]], and <code>digit</code> is a character in the range 0–9.</p>
+
+## Creating an Operator Tree
 
 Starting with an intent expression, we offer a `to_content` procedure to create an operator tree, via the following list of transformation rules:
 
@@ -240,7 +270,7 @@ number, or compound expression.
 </tr><tr>
 <td>
 
-<pre><code class="hljs">_(_the, open-interval, _from, $arg1, _to $arg2)</code></pre>
+<pre><code class="hljs">_(_the, open-interval, _from, $arg1, _to, $arg2)</code></pre>
 
 </td><td>
 
@@ -272,7 +302,7 @@ number, or compound expression.
 </tr></tbody></table>
 
 
-# Phrase book to Pragmatic Content MathML
+## Phrase book to Pragmatic Content MathML
 
 The following (partial) map can be used to rewrite the virtual content dictionary trees as Pragmatic Content MathML.
 

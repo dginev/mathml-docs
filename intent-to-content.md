@@ -712,7 +712,7 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 </td></tr>
 <tr><td>
 
-<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>imaginary part<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>imaginary-part<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
 </code></pre>
 
 </td><td>
@@ -1647,7 +1647,7 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 </td></tr>
 <tr><td>
 
-<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>imaginary-number<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>imaginary-unit<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
 </code></pre>
 
 </td><td>

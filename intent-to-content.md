@@ -1174,7 +1174,7 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 </td></tr>
 <tr><td>
 
-<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>catangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>cotangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
 </code></pre>
 
 </td><td>
@@ -1306,7 +1306,7 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 </td></tr>
 <tr><td>
 
-<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-catangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>hyperbolic-cotangent<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
 </code></pre>
 
 </td><td>

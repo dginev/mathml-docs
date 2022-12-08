@@ -41,7 +41,7 @@ pre.def {
 
 This note suggests a two-step alogrithm for transforming intent expressions into Content MathML.
 First, we offer rules to build an operator tree with symbols in the "intent" virtual content dictionary.
-Second, we suggest a "phrase book" for mapping those operator trees into the classic subset of Content MathML.
+Second, we suggest a "phrase book" for mapping those operator trees into Full Content MathML.
 
 ## Preliminaries - The Grammar for <code class="attribue">intent</code>
 
@@ -323,9 +323,9 @@ number, compound expression,<br> or literal different from "_".
 </tr></tbody></table>
 
 
-## Phrase book to classic Content MathML
+## Phrase book to Full Content MathML
 
-The following (partial) map can be used to rewrite the virtual content dictionary trees as classic Content MathML.
+The following (partial) map can be used to rewrite the virtual content dictionary trees as Full Content MathML.
 
 It covers the chapter [4.4 Content MathML for Specific Operators and Constants](https://www.w3.org/TR/MathML3/chapter4.html#contm.opel).
 
@@ -333,7 +333,7 @@ Note that there are quite often known aliases for mathematical  concepts (in nar
 
 <table style="width: 80rem; overflow:visible;">
 <thead><tr>
-  <th>intent CD input symbol</th><th>classic Content MathML output</th>
+  <th>intent CD input symbol</th><th>Full Content MathML output</th>
 </tr></thead>
 <tbody>
 <tr><td>

@@ -261,6 +261,26 @@ number, compound expression,<br> or literal different from "_".
 </td><td>"intent" head is <br>concept, reference, <br>
 number, compound expression,<br> or literal different from "_".
 </td>
+
+</tr><tr>
+<td>
+
+<pre><code class="hljs">_our_altered_minus(1,2,3)
+</code></pre>
+
+</td><td>
+
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">apply</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">csymbol</span> cd="intent"&gt;</span>_our_altered_minus<span class="hljs-tag">&lt;/<span class="hljs-name">csymbol</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>1<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>2<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">cn</span>&gt;</span>3<span class="hljs-tag">&lt;/<span class="hljs-name">cn</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">apply</span>&gt;</span>
+</code></pre>
+
+</td><td>"intent" head is <br>concept, reference, <br>
+number, compound expression,<br> or literal different from "_".
+</td>
 </tr><tr>
 <td>
 
